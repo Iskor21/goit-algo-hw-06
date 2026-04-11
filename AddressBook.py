@@ -11,7 +11,12 @@ class Field:
 
 # Ім'я контакту
 class Name(Field):
-    pass
+    def __init__(self, value: str):
+        if not value.strip():
+            raise ValueError("Ім'я не може бути порожнім")
+        if not value.isalpha():
+            raise ValueError("Ім'я має містити лише літери")
+        super().__init__(value)
 
 
 # Телефон з валідацією
