@@ -32,8 +32,8 @@ class Record:
         for p in self.phones:
             if p.value == phone:
                 self.phones.remove(p)
-                return
-        raise ValueError(f"Телефон {phone} не знайдено")
+            else:
+                raise f"Телефон {phone} не знайдено"
 
     def find_phone(self, number):
         for phone in self.phones:
