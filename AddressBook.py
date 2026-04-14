@@ -11,12 +11,9 @@ class Field:
 # валідація номера
 class Phone(Field):
     def __init__(self, value: str):
+        if not value.isdigit() or len(value) != 10:
+            raise ValueError("Телефон має містити рівно 10 цифр")
         super().__init__(value)
-        if len(value) == 10:
-            self.phone = value
-        else:
-            wrong = value
-            print(f"Номер {wrong} не містить 10 цифр.")
 
 class Name(Field):
     def __init__(self, value: str):
@@ -29,14 +26,18 @@ class Record:
         self.phones = []
 
     def add_phone(self, phone):
-        self.phones.append(phone)
+        self.phones.append(Phone(phone))
 
     def remove_phone(self, phone):
-        self.phones.remove(phone)
+        for p in self.phones:
+            if p.value == phone:
+                self.phones.remove(p)
+                return
+        raise ValueError(f"Телефон {phone} не знайдено")
 
     def find_phone(self, number):
         for phone in self.phones:
-            if phone == number:
+            if  phone.value == number:
                 return phone
         return None
 
@@ -44,13 +45,14 @@ class Record:
         if self.find_phone(old_phone):
             self.remove_phone(old_phone)
             self.add_phone(new_phone)
-            print(f"Номер телефону: {old_phone} змінено на: {new_phone}")
+            return new_phone
         else:
-            print(f"Номер {old_phone} не знайдено")
+            raise ValueError(f"Телефон {old_phone} не знайдено")
 
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {' | '.join(p for p in self.phones)}"
+        phones = "; ".join(str(p) for p in self.phones) if self.phones else "-"
+        return f"Contact name: {self.name.value}, phones: {phones}"
 
 
 #Додавання записів. Пошук записів за іменем. Видалення записів за іменем.
@@ -59,9 +61,7 @@ class AddressBook(UserDict):
         self.data[record.name.value] = record
 
     def find(self, name):
-        if name in self.data:
-            contact = self.data[name]  # отримуємо об’єкт Contact
-            return contact
+        return self.data.get(name)
 
     def delete(self, name: Record):
         if name in self.data:
