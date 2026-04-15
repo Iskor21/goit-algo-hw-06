@@ -28,26 +28,27 @@ class Record:
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
 
-    def remove_phone(self, phone):
-        for p in self.phones:
-            if p.value == phone:
-                self.phones.remove(p)
-            else:
-                raise f"Телефон {phone} не знайдено"
+    def remove_phone(self, number):
+        found = self.find_phone(number)
+        if found:
+            self.phones.remove(found)
+        else:
+            return f"Телефон {phone} не знайдено"
 
     def find_phone(self, number):
         for phone in self.phones:
             if  phone.value == number:
                 return phone
-        return None
+        return f"Телефон {number} не знайдено"
 
-    def edit_phone(self, old_phone, new_phone):
-        if self.find_phone(old_phone):
-            self.remove_phone(old_phone)
+    def edit_phone(self, phone, new_phone):
+        found = self.find_phone(phone)
+        if found:
             self.add_phone(new_phone)
+            self.remove_phone(phone)
             return new_phone
         else:
-            raise ValueError(f"Телефон {old_phone} не знайдено")
+            return f"Телефон {phone} не знайдено"
 
 
     def __str__(self):
@@ -66,7 +67,6 @@ class AddressBook(UserDict):
     def delete(self, name: Record):
         if name in self.data:
             del self.data[name]
-            print(f"Запис {name} видалено.")
 
     def __str__(self):
         return "\n".join(str(record) for record in self.data.values())
@@ -107,8 +107,10 @@ print(f"{john.name}: {found_phone}")  # Виведення: John: 5555555555
 # Видалення запису Jane
 print("\n=== Видалення ===")
 book.delete("Jane")
-
-# Виведення всіх записів у книзі
-print("\n=== Вивід книги ===")
 print(book)
+
+# Видалення номеру John
+print("\n=== Видалення номеру John ===")
+remove_phone = john.remove_phone("5555555555")
+print(john)
 
