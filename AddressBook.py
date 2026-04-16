@@ -39,16 +39,20 @@ class Record:
         for phone in self.phones:
             if  phone.value == number:
                 return phone
-        return f"Телефон {number} не знайдено"
+        return None
 
-    def edit_phone(self, phone, new_phone):
-        found = self.find_phone(phone)
+    def edit_phone(self, old_number: str, new_number: str):
+        found = self.find_phone(old_number)
         if found:
-            self.add_phone(new_phone)
-            self.remove_phone(phone)
-            return new_phone
+            try:
+                self.add_phone(new_number)   # перевірка валідності
+                self.remove_phone(old_number)
+                return new_number
+            except ValueError as e:
+                raise ValueError(f"Новий телефон {new_number} невалідний: {e}")
         else:
-            return f"Телефон {phone} не знайдено"
+            raise ValueError(f"Телефон {old_number} не знайдено")
+
 
 
     def __str__(self):
